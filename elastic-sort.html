@@ -1,0 +1,70 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ee-common/ee-common.html">
+<!--
+An element that creates an ejs.Sort() object to pass onto elastic-client-search
+based on user input.
+
+Example:
+
+    <elastic-sort input-string="Sort('_score').order('desc')"></elastic-sort>
+
+@element elastic-sort
+@demo demo/index.html
+-->
+
+<script>
+  Polymer({
+
+    is: 'elastic-sort',
+
+    properties: {
+
+      /**
+       * String in correct format to create ejs.Sort() object with. If string is 
+       * invalid, lastError will be updated.
+       */
+      inputString: {
+        type: String,
+        notify: true,
+        observer: 'createEjsSort'
+      },
+      /**
+       * ejs.Sort() object to propagate
+       */
+      sort: {
+        type: Object,
+        value: function() {
+          return {};
+        },
+        readOnly: true,
+        notify: true
+      },
+      /**
+       * If error occurs in creation of ejs.Sort() object, it will be stored here.
+       * Otherwise will be left empty. 
+       */
+      lastError: {
+        type: Object,
+        value: function() {
+          return {};
+        },
+        readOnly: true,
+        notify: true
+      }
+
+    },
+    createEjsSort: function() {
+      /* jshint -W061 */
+      if(this.inputString && this.inputString.length > 0) {
+          try {
+            this._setSort(eval('ejs.' + this.inputString));
+          } catch(err) {
+            // capture error in lastError property
+            this._setLastError(err);
+          }
+        }
+    }
+
+  });
+
+</script>

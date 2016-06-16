@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <!-- Step 1: import the element to test -->
+    <link rel="import" href="../elastic-sort.html">
+  </head>
+  <body>
+
+    <!-- You can use the document as a place to set up your fixtures. -->
+    <test-fixture id="elastic-sort-fixture">
+      <template>
+        <elastic-sort input-string="Sort('date').order('desc')"></elastic-sort>
+      </template>
+    </test-fixture>
+    
+
+    <script>
+      suite('<elastic-sort>', function() {
+
+        var element;
+
+        setup(function() {
+          element = fixture('elastic-sort-fixture');
+        });
+
+        test('defines the "input-string" property', function() {
+          assert.equal(element.inputString, 'Sort(\'date\').order(\'desc\')');
+        });
+
+        test('sort property created based on inputString', function() {
+          assert.deepEqual(element.sort.toJSON(), ejs.Sort('date').order('desc').toJSON());
+        });
+
+        test('lastError property initialized', function() {
+          assert.deepEqual(element.lastError, {});
+        });
+
+        test('if inputString is invalid, sort is not updated but lastError is', function() {
+          element.inputString = 'invalidFunction()';
+
+          assert.deepEqual(element.sort.toJSON(), ejs.Sort('date').order('desc').toJSON());
+          assert.deepEqual(element.lastError.name, 'TypeError');
+          assert.deepEqual(element.lastError.message, 'ejs.invalidFunction is not a function');
+        });
+
+      });
+    </script>
+
+  </body>
+</html>
